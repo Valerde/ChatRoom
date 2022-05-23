@@ -3,10 +3,7 @@ package ykn.sovava.myclient.scene;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -22,14 +19,16 @@ import javafx.stage.WindowEvent;
  **/
 public abstract class ChatScene {
     public TextArea receivedMsgArea;
-    public TextField ipText;
-    public TextField portText;
-    public TextArea sendMsgArea;
-    public TextField statusText;
+    public TextField nameText;
+    public Button friendsButton;
+    public Button groupButton;
+    public TextField msgText;
     public Button sendButton;
     public Stage stage;
     public GridPane rightPane;
-
+    public ListView<String> clientListView = new ListView<>();
+    public ListView<String> groupListView = new ListView<>();
+    public ListView<String> grouperListView = new ListView<>();
     public ChatScene(Stage stage) {
         this.stage = stage;
 
@@ -52,35 +51,54 @@ public abstract class ChatScene {
         leftPane1.setPadding(new Insets(11.5, 12.5, 13.5, 14.5));
         leftPane1.setHgap(5.5);
         leftPane1.setVgap(5.5);
-        leftPane1.add(new Label("IPAdress:"), 0, 0);
-        ipText = new TextField();
-        ipText.setEditable(false);
-        leftPane1.add(ipText, 1, 0);
-        leftPane1.add(new Label("Port:"), 0, 1);
-        portText = new TextField();
-        portText.setEditable(false);
-        leftPane1.add(portText, 1, 1);
+        leftPane1.add(new Label("My Name:"), 0, 0);
+        nameText = new TextField();
+        nameText.setMaxWidth(150);
+        //nameText.setText();
+        nameText.setEditable(false);
+        leftPane1.add(nameText, 1, 0);
+//        ipText = new TextField();
+//        ipText.setEditable(false);
+//        leftPane1.add(ipText, 1, 0);
+//        leftPane1.add(new Label("Port:"), 0, 1);
+//        portText = new TextField();
+//        portText.setEditable(false);
+//        leftPane1.add(portText, 1, 1);
 
         //左边 Send Message
         GridPane leftPane2 = new GridPane();
         leftPane2.setPadding(new Insets(11.5, 12.5, 13.5, 14.5));
         leftPane2.setHgap(5.5);
         leftPane2.setVgap(5.5);
-        leftPane2.add(new Label("Send Message:"), 0, 2);
-        sendMsgArea = new TextArea();
-        sendMsgArea.setPrefHeight(250);
-        sendMsgArea.setMaxWidth(275);
-        sendMsgArea.setWrapText(true);
-        leftPane2.add(sendMsgArea, 0, 3);
+        friendsButton = new Button("Friends");
+        //friendsButton.setMaxWidth(50);
+        leftPane2.add(friendsButton, 0, 1);
+        //leftPane2.add(new Label("Friends:"), 0, 1);
+        clientListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        clientListView.setMaxHeight(100);
+        clientListView.setMaxWidth(275);
+        leftPane2.add(clientListView, 0, 2,2,1);
+        groupButton = new Button("Groups");
+        leftPane2.add(groupButton, 0, 3);
+        groupListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        groupListView.setMaxHeight(100);
+        groupListView.setMaxWidth(120);
+        leftPane2.add(groupListView, 0, 4);
+        grouperListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        grouperListView.setMaxHeight(100);
+        grouperListView.setMaxWidth(120);
+        leftPane2.add(grouperListView, 1, 4);
+
 
         //左边 Connect Status + button
         GridPane leftPane3 = new GridPane();
         leftPane3.setPadding(new Insets(11.5, 12.5, 13.5, 14.5));
         leftPane3.setHgap(5.5);
         leftPane3.setVgap(5.5);
-        statusText = new TextField();
-        statusText.setEditable(false);
-        leftPane3.add(statusText, 0, 0);
+        msgText = new TextField();
+        msgText.setEditable(true);
+        msgText.setPrefWidth(185);
+        leftPane3.add(msgText, 0, 0);
         sendButton = new Button("Send");
         leftPane3.add(sendButton, 1, 0);
 
@@ -94,13 +112,7 @@ public abstract class ChatScene {
         Scene scene = new Scene(hBox);
         stage.setTitle("client");
         stage.setScene(scene);
-        //关闭UI线程时同时关闭各子线程
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                System.exit(0);
-            }
-        });
+
         stage.show();
     }
 }

@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import ykn.sovava.myclient.scene.ChatScene;
 import ykn.sovava.myclient.scene.ClientRun;
 import ykn.sovava.myclient.scene.Login;
 
@@ -48,7 +49,7 @@ public class Director {
         stage.setWidth(WIDTH);
         stage.setResizable(false);
         this.stage = stage;
-
+//        new ChatScene(stage);
         toLogin();
         stage.show();
     }

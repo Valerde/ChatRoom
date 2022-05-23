@@ -88,7 +88,7 @@ public class ClientUI extends Application{
                 System.exit(0);
             }
         });
-        //primaryStage.show();
+        primaryStage.show();
 
         //启动Client线程
         new Thread(new MyClient( receivedMsgArea, ipText, portText, sendMsgArea, statusText, sendButton)).start();

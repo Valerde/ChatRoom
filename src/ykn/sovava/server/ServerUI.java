@@ -32,7 +32,6 @@ import javafx.stage.WindowEvent;
  *
  */
 public class ServerUI extends Application{
-
     TextArea receivedMsgArea = new TextArea();
     TextField ipText = new TextField();
     TextField portText = new TextField();

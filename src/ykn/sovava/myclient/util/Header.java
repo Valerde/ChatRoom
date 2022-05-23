@@ -13,4 +13,5 @@ public class Header {
     public static final String SOMEONE_LOGIN_NAME = "yzrfdglu";
     public static final String KICK_OUT = "tiiuqu";
     public static final String I_LEAVE = "wotviu";
+    public static final String YOUR_GROUP = "lanijbqtla";
 }
