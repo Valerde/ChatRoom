@@ -10,7 +10,7 @@ public class msgHandle {
     private static String msg;
 
     public msgHandle(String msg) {
-        this.msg = msg;
+        msgHandle.msg = msg;
     }
 
     public static String getHeader() {

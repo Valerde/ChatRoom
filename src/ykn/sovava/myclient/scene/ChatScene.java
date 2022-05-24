@@ -17,12 +17,12 @@ import javafx.stage.WindowEvent;
  * @author: ykn
  * @date: 2022年05月22日 17:54
  **/
-public abstract class ChatScene {
+public class ChatScene {
     public TextArea receivedMsgArea;
     public TextField nameText;
     public Button friendsButton;
     public Button groupButton;
-    public TextField msgText;
+    public TextArea msgText;//TODO: 改为area
     public Button sendButton;
     public Stage stage;
     public GridPane rightPane;
@@ -54,16 +54,8 @@ public abstract class ChatScene {
         leftPane1.add(new Label("My Name:"), 0, 0);
         nameText = new TextField();
         nameText.setMaxWidth(150);
-        //nameText.setText();
         nameText.setEditable(false);
         leftPane1.add(nameText, 1, 0);
-//        ipText = new TextField();
-//        ipText.setEditable(false);
-//        leftPane1.add(ipText, 1, 0);
-//        leftPane1.add(new Label("Port:"), 0, 1);
-//        portText = new TextField();
-//        portText.setEditable(false);
-//        leftPane1.add(portText, 1, 1);
 
         //左边 Send Message
         GridPane leftPane2 = new GridPane();
@@ -95,12 +87,17 @@ public abstract class ChatScene {
         leftPane3.setPadding(new Insets(11.5, 12.5, 13.5, 14.5));
         leftPane3.setHgap(5.5);
         leftPane3.setVgap(5.5);
-        msgText = new TextField();
+        msgText = new TextArea();
         msgText.setEditable(true);
         msgText.setPrefWidth(185);
-        leftPane3.add(msgText, 0, 0);
+        msgText.setMaxHeight(50);
+        msgText.setWrapText(true);
+        msgText.setPromptText("和好友愉快的聊天吧");
+
+
+        leftPane3.add(msgText, 0, 0,2,1);
         sendButton = new Button("Send");
-        leftPane3.add(sendButton, 1, 0);
+        leftPane3.add(sendButton, 2, 0);
 
 
         //组合

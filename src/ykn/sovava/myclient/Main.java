@@ -17,6 +17,6 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
-        //TODO: 初步改造服务器和客户端界面。
+
     }
 }
