@@ -20,7 +20,7 @@ public class Server implements Runnable {
     public static final int PORT = 9999;
     //映射表 存放每个socket地址(IP:Port)及其对应的PrintWriter
     //为群发消息做准备
-    Map<String, PrintWriter> map = new HashMap<>();//TODO :gd
+    Map<String, Handler> map = new HashMap<>();//TODO :gd
     //存放已连接socket地址(IP:Port)，用于clientListView
     ObservableList<String> clients;
     ListView<String> clientListView;

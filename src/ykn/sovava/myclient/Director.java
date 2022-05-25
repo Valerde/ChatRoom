@@ -49,8 +49,8 @@ public class Director {
         stage.setWidth(WIDTH);
         stage.setResizable(false);
         this.stage = stage;
-        new ChatScene(stage);
-//        toLogin();
+//        new ChatScene(stage);
+        toLogin();
         stage.show();
     }
 

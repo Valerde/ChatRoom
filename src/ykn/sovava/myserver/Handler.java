@@ -1,18 +1,17 @@
 package ykn.sovava.myserver;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Map;
+
+import com.sun.jmx.snmp.SnmpAckPdu;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import ykn.sovava.myclient.util.Header;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -32,13 +31,17 @@ public class Handler implements Runnable {
     TextArea receivedMsgArea;
     ObservableList<String> clients;
     ListView<String> clientListView;
-    Map<String, PrintWriter> map;
+    Map<String, Handler> map;
+    BufferedReader br;
+    public PrintStream ps;
+    public String nickName;
+    public msgHandle mh;
 
     public Handler() {
         super();
     }
 
-    public Handler(Map<String, PrintWriter> map, Socket socket, TextArea sendMsgArea, Button sendButton,
+    public Handler(Map<String, Handler> map, Socket socket, TextArea sendMsgArea, Button sendButton,
                    TextArea receivedMsgArea, ObservableList<String> clients, ListView<String> clientListView) {
         super();
         this.map = map;
@@ -48,6 +51,13 @@ public class Handler implements Runnable {
         this.receivedMsgArea = receivedMsgArea;
         this.clients = clients;
         this.clientListView = clientListView;
+        try {
+            br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            ps = new PrintStream(socket.getOutputStream());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -56,11 +66,11 @@ public class Handler implements Runnable {
      * 2.receivedMsgarea打印成功连接信息
      * 3.statusText更新成功连接个数
      */
-    public void updateForConnect(String remoteSocketAddress) {
+    public void updateForConnect(String nickName) {
         Platform.runLater(() -> {
-            clients.add(remoteSocketAddress);
+            clients.add(nickName);
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            receivedMsgArea.appendText(String.valueOf(clients.size()) + " Connected from " + remoteSocketAddress + " " + sdf.format(new Date()) + "\n");
+            receivedMsgArea.appendText(String.valueOf(clients.size()) + " Connected from " + nickName + " " + sdf.format(new Date()) + "\n");
             //statusText.setText(String.valueOf(clients.size()) + " Connect success.");
         });
     }
@@ -72,12 +82,12 @@ public class Handler implements Runnable {
      * 3.statusText更新成功连接个数
      * 4.移除map中对应的remoteSocketAddress
      */
-    public void updateForDisConnect(String remoteSocketAddress) {
+    public void updateForDisConnect(String nickName) {
         Platform.runLater(() -> {
-            clients.remove(remoteSocketAddress);
+            clients.remove(nickName);
             //statusText.setText(String.valueOf(clients.size()) + " Connect success.");
-            receivedMsgArea.appendText(remoteSocketAddress + " out of connected.." + "\n");
-            map.remove(remoteSocketAddress);
+            receivedMsgArea.appendText(nickName + " out of connected.." + "\n");
+            map.remove(nickName);
         });
     }
 
@@ -91,41 +101,62 @@ public class Handler implements Runnable {
      * 2.2写入待发送的消息
      */
     public void sendMessage() {
-        Set<PrintWriter> printWriters = new HashSet<>();
+        Set<Handler> handlers = new HashSet<>();
         clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
-            printWriters.clear();
+            handlers.clear();
             for (String key : clientListView.getSelectionModel().getSelectedItems()) {
-                printWriters.add(map.get(key));
+                handlers.add(map.get(key));
             }
         });
         sendButton.setOnAction(e -> {
-            for (PrintWriter printWriter : printWriters) {
-                printWriter.write("127.0.0.1:9999" + "  " + sendMsgArea.getText() + "\r\n");
-                printWriter.flush();
+            for (Handler h : handlers) {
+                h.ps.println("Server" + sendMsgArea.getText() + "\r\n");
+                //.write("127.0.0.1:9999" + "  " + sendMsgArea.getText() + "\r\n");
+                ps.flush();
             }
         });
     }
 
     @Override
     public void run() {
-        String remoteSocketAddress = socket.getRemoteSocketAddress().toString().substring(1);
-        updateForConnect(remoteSocketAddress);
+//        String remoteSocketAddress = socket.getRemoteSocketAddress().toString().substring(1);
+
         try {
-            InputStream in = socket.getInputStream();
-            BufferedReader bReader = new BufferedReader(new InputStreamReader(in));
-            OutputStream out = socket.getOutputStream();
-            PrintWriter pWriter = new PrintWriter(out);
-            map.put(remoteSocketAddress, pWriter);
+
+
             //发消息
             sendMessage();
             //收消息
-            String message;
+            String msg;
             while (true) {
-                message = bReader.readLine();
-                receivedMsgArea.appendText(message + "\n");
+                msg = br.readLine();
+                System.out.println(msg);
+                mh = new msgHandle(msg);
+                handlerMSG();
+//                map.put(nickName,this);
+//                receivedMsgArea.appendText(message + "\n");
             }
         } catch (IOException e) {
-            updateForDisConnect(remoteSocketAddress);
+//            updateForDisConnect(remoteSocketAddress);
+        }
+    }
+
+    public void handlerMSG() {
+        switch (mh.getHeader()) {
+            case Header.MY_LOGIN_NAME: {
+                nickName = mh.getContext();
+//                System.out.println(nickName);
+                updateForConnect(nickName);
+                map.put(nickName, this);
+                break;
+            }
+            case Header.UPLOAD_MSG: {
+                receivedMsgArea.appendText(mh.getContext()+ "\n");
+                break;
+            }
+            case Header.I_LEAVE: {
+                updateForDisConnect(nickName);
+            }
         }
     }
 

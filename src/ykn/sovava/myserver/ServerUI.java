@@ -43,7 +43,7 @@ public class ServerUI extends Application {
     Button groupButton = new Button(" make ");
     ObservableList<String> clients = FXCollections.observableArrayList();
     //    ListView<String> clientListView = new ListView<>(clients);
-    public ListView<String> clientListView = new ListView<>();
+    public ListView<String> clientListView = new ListView<>(clients);
     public ListView<String> groupListView = new ListView<>();
     public ListView<String> grouperListView = new ListView<>();
 
