@@ -1,7 +1,7 @@
 package ykn.sovava.myserver;
 
 /**
- * Description: TODO
+ * Description:
  *
  * @author: ykn
  * @date: 2022年05月23日 22:48
@@ -27,4 +27,5 @@ public class msgHandle {
         System.out.println(context);
         return context;
     }
+    //public String getName
 }

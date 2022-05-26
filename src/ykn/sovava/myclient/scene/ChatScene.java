@@ -1,5 +1,7 @@
 package ykn.sovava.myclient.scene;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -12,7 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 /**
- * Description: TODO
+ * Description:
  *
  * @author: ykn
  * @date: 2022年05月22日 17:54
@@ -22,13 +24,16 @@ public class ChatScene {
     public TextField nameText;
     public Button friendsButton;
     public Button groupButton;
-    public TextArea msgText;//TODO: 改为area
+    public TextArea msgText;
     public Button sendButton;
     public Stage stage;
     public GridPane rightPane;
-    public ListView<String> clientListView = new ListView<>();
-    public ListView<String> groupListView = new ListView<>();
-    public ListView<String> grouperListView = new ListView<>();
+    ObservableList<String> clients = FXCollections.observableArrayList();
+    public ListView<String> clientListView = new ListView<>(clients);
+    ObservableList<String> group = FXCollections.observableArrayList();
+    public ListView<String> groupListView = new ListView<>(group);
+    ObservableList<String> grouper = FXCollections.observableArrayList();
+    public ListView<String> grouperListView = new ListView<>(grouper);
     public ChatScene(Stage stage) {
         this.stage = stage;
 

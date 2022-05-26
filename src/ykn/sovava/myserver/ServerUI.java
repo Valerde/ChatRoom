@@ -38,7 +38,7 @@ public class ServerUI extends Application {
     TextField ipText = new TextField();
     TextField portText = new TextField();
     TextArea sendMsgArea = new TextArea();
-//    TextField statusText = new TextField();
+    //    TextField statusText = new TextField();
     Button sendButton = new Button(" Send ");
     Button groupButton = new Button(" make ");
     ObservableList<String> clients = FXCollections.observableArrayList();
@@ -125,7 +125,7 @@ public class ServerUI extends Application {
 
 //        statusText.setText("0 Connect success.");
         //启动server线程
-        new Thread(new Server(ipText, portText, sendMsgArea,  sendButton, receivedMsgArea, clients, clientListView)).start();
+        new Thread(new Server(ipText, portText, sendMsgArea, sendButton, receivedMsgArea, clients, clientListView)).start();
     }
 
 }

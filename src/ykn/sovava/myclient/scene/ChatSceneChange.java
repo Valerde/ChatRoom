@@ -5,14 +5,18 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import ykn.sovava.myclient.util.Header;
+import ykn.sovava.myserver.Handler;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Description: TODO
+ * Description:
  *
  * @author: ykn
  * @date: 2022年05月22日 18:01
@@ -70,8 +74,31 @@ public abstract class ChatSceneChange extends ChatScene {
     }
 
     protected void send(String msg) {
-        if (msg != null && !msg.equals(""))
-            ps.println(Header.UPLOAD_MSG + "|" + msg);
+        StringBuilder f = null;
+        Set<String> friendToSend = new HashSet<>();
+        clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+            friendToSend.clear();
+            friendToSend.addAll(clientListView.getSelectionModel().getSelectedItems());
+        });
+        sendButton.setOnAction(e -> {
+
+            for (String h : friendToSend) {
+                //h.ps.println("Server" + sendMsgArea.getText() + "\r\n");
+                //.write("127.0.0.1:9999" + "  " + sendMsgArea.getText() + "\r\n");
+                assert false;
+                f.append(h).append(":");
+
+            }
+            if (msg != null && !msg.equals("")) {
+                assert false;
+                System.out.println(f.toString());
+                ps.println(Header.UPLOAD_MSG + "|" + f.toString() + "|" + msg);
+                ps.flush();
+            }
+
+        });
+
+
     }
 
 

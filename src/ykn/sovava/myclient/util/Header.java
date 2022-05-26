@@ -7,6 +7,7 @@ package ykn.sovava.myclient.util;
  * @date: 2022年05月22日 19:01
  **/
 public class Header {
+    //TODO :完善消息格式
     public static final String UPLOAD_MSG = "faxnxi";
     public static final String ISSUED_MSG = "xxfaxnxi";
     public static final String MY_LOGIN_NAME = "wodgluqpyzmkzi";

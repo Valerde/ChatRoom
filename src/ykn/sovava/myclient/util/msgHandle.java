@@ -1,7 +1,11 @@
 package ykn.sovava.myclient.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Description: TODO
+ * Description:
  *
  * @author: ykn
  * @date: 2022年05月23日 22:48
@@ -19,5 +23,10 @@ public class msgHandle {
 
     public String context() {
         return msg.split("\\|")[1];
+    }
+
+    public List<String> grouper(){
+        String[] msgs = msg.split("\\|")[1].split(":");
+        return Arrays.asList(msgs);
     }
 }

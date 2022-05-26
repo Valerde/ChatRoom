@@ -1,7 +1,9 @@
 package ykn.sovava.myclient.scene;
 
+import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 import ykn.sovava.myclient.util.Header;
+import ykn.sovava.myclient.util.msgHandle;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,13 +13,13 @@ import java.net.Socket;
 
 
 /**
- * Description: TODO
+ * Description:
  *
  * @author: ykn
  * @date: 2022年05月22日 18:08
  **/
 public class ClientRun extends ChatSceneChange implements Runnable {
-
+    public msgHandle mh;
 
     public ClientRun(Stage stage, String nickName) {
         super(stage);
@@ -33,7 +35,8 @@ public class ClientRun extends ChatSceneChange implements Runnable {
         while (true) {
             try {
                 String getMSG = br.readLine();
-                msgHandle(getMSG);
+                mh = new msgHandle(getMSG);
+                msgHandle();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -41,18 +44,24 @@ public class ClientRun extends ChatSceneChange implements Runnable {
         }
     }
 
-    private void msgHandle(String getMSG) {
-        switch (getMSG.split("|")[0]) {
+    private void msgHandle() {
+        switch (mh.getHeader()) {
             case Header.ISSUED_MSG: {
+                msgText.appendText(mh.context() + "\r\n");
                 break;
             }
             case Header.KICK_OUT: {
+                ps.println(Header.I_LEAVE);
+                System.exit(0);
                 break;
             }
             case Header.SOMEONE_LOGIN_NAME: {
+                clients.add(mh.context());
                 break;
             }
             case Header.YOUR_GROUP: {
+                group.add(mh.context());
+                grouper = (ObservableList<String>) mh.grouper();
                 break;
             }
         }

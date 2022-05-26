@@ -148,15 +148,22 @@ public class Handler implements Runnable {
 //                System.out.println(nickName);
                 updateForConnect(nickName);
                 map.put(nickName, this);
+                for (String nn : map.keySet()) {
+                    if (!nn.equals(nickName)) {
+                        map.get(nn).ps.println(Header.SOMEONE_LOGIN_NAME + "|" + nickName);
+                    }
+                }
                 break;
             }
             case Header.UPLOAD_MSG: {
-                receivedMsgArea.appendText(mh.getContext()+ "\n");
+                System.out.println(mh.getContext());
+                receivedMsgArea.appendText(mh.getContext() + "\n");
                 break;
             }
             case Header.I_LEAVE: {
                 updateForDisConnect(nickName);
             }
+
         }
     }
 
