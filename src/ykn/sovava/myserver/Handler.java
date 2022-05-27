@@ -2,9 +2,8 @@ package ykn.sovava.myserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Map;
+import java.util.*;
 
-import com.sun.jmx.snmp.SnmpAckPdu;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
@@ -13,9 +12,6 @@ import javafx.scene.control.TextArea;
 import ykn.sovava.myclient.util.Header;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @className: handler
@@ -110,7 +106,7 @@ public class Handler implements Runnable {
         });
         sendButton.setOnAction(e -> {
             for (Handler h : handlers) {
-                h.ps.println("Server" + sendMsgArea.getText() + "\r\n");
+                h.ps.println("Server" + "|" + sendMsgArea.getText() + "| " + "\r\n");
                 //.write("127.0.0.1:9999" + "  " + sendMsgArea.getText() + "\r\n");
                 ps.flush();
             }
@@ -123,7 +119,6 @@ public class Handler implements Runnable {
 
         try {
 
-
             //发消息
             sendMessage();
             //收消息
@@ -133,8 +128,6 @@ public class Handler implements Runnable {
                 System.out.println(msg);
                 mh = new msgHandle(msg);
                 handlerMSG();
-//                map.put(nickName,this);
-//                receivedMsgArea.appendText(message + "\n");
             }
         } catch (IOException e) {
 //            updateForDisConnect(remoteSocketAddress);
@@ -144,23 +137,45 @@ public class Handler implements Runnable {
     public void handlerMSG() {
         switch (mh.getHeader()) {
             case Header.MY_LOGIN_NAME: {
-                nickName = mh.getContext();
+                nickName = mh.getNickName();
 //                System.out.println(nickName);
                 updateForConnect(nickName);
                 map.put(nickName, this);
+                //通知已登录的客户端,说我登录了
                 for (String nn : map.keySet()) {
                     if (!nn.equals(nickName)) {
-                        map.get(nn).ps.println(Header.SOMEONE_LOGIN_NAME + "|" + nickName);
+                        map.get(nn).ps.println(Header.SOMEONE_LOGIN_NAME + "|" + nickName + "| ");
                     }
                 }
+                //通知新登录的客户端,说已经有这些老大哥登陆了
+                StringBuilder sb = new StringBuilder();
+                for (String nn : map.keySet()) {
+                    if (!nn.equals(nickName)) {
+                        sb.append(nn).append(":");
+                    }
+                }
+                if (sb.length() > 0)
+                    sb.deleteCharAt(sb.length() - 1);
+                System.out.println(Header.LOG_IN_ED + "|" + sb + "| ");
+                ps.println(Header.LOG_IN_ED + "|" + sb + "| ");
                 break;
             }
             case Header.UPLOAD_MSG: {
                 System.out.println(mh.getContext());
-                receivedMsgArea.appendText(mh.getContext() + "\n");
+                receivedMsgArea.appendText(nickName + ":" + mh.getContext() + "\n");
+                List<String> fl = mh.getGrouperName();
+                for (String s : fl) {
+                    map.get(s).ps.println(Header.ISSUED_MSG + "|" + nickName + "|" + mh.getContext());
+                }
                 break;
             }
             case Header.I_LEAVE: {
+
+                for (String nn : map.keySet()) {
+                    if (!nn.equals(nickName)) {
+                        map.get(nn).ps.println(Header.SOMEONE_LEAVE + "|" + nickName + "| ");
+                    }
+                }
                 updateForDisConnect(nickName);
             }
 

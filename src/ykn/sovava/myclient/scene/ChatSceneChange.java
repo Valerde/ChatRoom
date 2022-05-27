@@ -29,6 +29,7 @@ public abstract class ChatSceneChange extends ChatScene {
     public Stage stage;
     public String nickName;
     public String msg;
+    public StringBuilder f = null;
 
     public ChatSceneChange(Stage stage) {
         super(stage);
@@ -48,57 +49,55 @@ public abstract class ChatSceneChange extends ChatScene {
         groupButton.setOnAction(event -> {
 
         });
-        //设置回车发送消息
-        msgText.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) { //判断是否按下回车
-                event.consume();
-                msg = msgText.getText();
-                send(msg);
-                if (msgText != null) msgText.clear();
-            }
-        });
-        //设置发送按钮发送消息
-        sendButton.setOnAction(event -> {
-            msg = msgText.getText();
-            send(msg);
-            if (msgText != null) msgText.clear();
-        });
-        //关闭UI线程时同时关闭各子线程
+
+
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                ps.println(Header.I_LEAVE);
+                ps.println(Header.I_LEAVE + "| | ");
                 System.exit(0);
             }
         });
     }
 
-    protected void send(String msg) {
-        StringBuilder f = null;
+    protected void sendMSG() {
+
         Set<String> friendToSend = new HashSet<>();
         clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
             friendToSend.clear();
             friendToSend.addAll(clientListView.getSelectionModel().getSelectedItems());
         });
+        //设置发送按钮发送消息
         sendButton.setOnAction(e -> {
-
-            for (String h : friendToSend) {
-                //h.ps.println("Server" + sendMsgArea.getText() + "\r\n");
-                //.write("127.0.0.1:9999" + "  " + sendMsgArea.getText() + "\r\n");
-                assert false;
-                f.append(h).append(":");
-
+            send(friendToSend);
+        });
+        //设置回车发送消息
+        msgText.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) { //判断是否按下回车
+                event.consume();
+                send(friendToSend);
             }
-            if (msg != null && !msg.equals("")) {
-                assert false;
-                System.out.println(f.toString());
-                ps.println(Header.UPLOAD_MSG + "|" + f.toString() + "|" + msg);
-                ps.flush();
-            }
-
         });
 
 
+    }
+
+    private void send(Set<String> friendToSend) {
+        f = new StringBuilder();
+        for (String h : friendToSend) {
+            assert false;
+            f.append(h).append(",");
+        }
+        f.deleteCharAt(f.length() - 1);
+        msg = msgText.getText();
+        receivedMsgArea.appendText(nickName + ":" + msg + "\r\n");
+        if (msg != null && !msg.equals("")) {
+            assert false;
+            ps.println(Header.UPLOAD_MSG + "|" + f.toString() + "|" + msg);
+            f = null;
+            if (msgText != null) msgText.clear();
+            ps.flush();
+        }
     }
 
 
