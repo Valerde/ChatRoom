@@ -1,6 +1,5 @@
 package ykn.sovava.myserver;
 
-import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -24,23 +23,31 @@ import javafx.stage.WindowEvent;
  * @author: ykn
  * @date: 2022/5/19
  **/
-public class ServerUI extends Application {
-    TextArea receivedMsgArea = new TextArea();
-    TextField ipText = new TextField();
-    TextField portText = new TextField();
-    TextArea sendMsgArea = new TextArea();
-    Button sendButton = new Button(" Send ");
-    Button groupButton = new Button(" make ");
-    Button kickOutButton = new Button("kick");
-    ObservableList<String> clients = FXCollections.observableArrayList();
-    public ListView<String> clientListView = new ListView<>(clients);
-    ObservableList<String> groups = FXCollections.observableArrayList();
-    public ListView<String> groupListView = new ListView<>(groups);
-    ObservableList<String> groupers = FXCollections.observableArrayList();
-    public ListView<String> grouperListView = new ListView<>(groupers);
+public abstract class ServerUI {
+    public static TextArea receivedMsgArea = new TextArea();
+    public static TextField ipText = new TextField();
+    public static TextField portText = new TextField();
+    public static TextArea sendMsgArea = new TextArea();
+    public static Button sendButton = new Button(" Send ");
+    public static Button groupButton = new Button(" make ");
+    public static Button kickOutButton = new Button("kick");
+    public static ObservableList<String> clients = FXCollections.observableArrayList();
+    public static ListView<String> clientListView = new ListView<>(clients);
+    public static ObservableList<String> groups = FXCollections.observableArrayList();
+    public static ListView<String> groupListView = new ListView<>(groups);
+    public static ObservableList<String> groupers = FXCollections.observableArrayList();
+    public static ListView<String> grouperListView = new ListView<>(groupers);
+    public static Stage stage;
 
-    public void start(Stage primaryStage) throws Exception {
+    public ServerUI() {
+    }
 
+    public ServerUI(Stage stage) {
+        ServerUI.stage = stage;
+        initUI();
+    }
+
+    public void initUI(){
         //右边 Received Message
         GridPane rightPane = new GridPane();
         rightPane.setPadding(new Insets(11.5, 12.5, 13.5, 14.5));
@@ -59,9 +66,11 @@ public class ServerUI extends Application {
         leftPane1.setHgap(5.5);
         leftPane1.setVgap(5.5);
         leftPane1.add(new Label("IPAddress:"), 0, 0);
+        ipText.setText("127.0.0.1");
         ipText.setEditable(false);
         leftPane1.add(ipText, 1, 0);
         leftPane1.add(new Label("Port:"), 0, 1);
+        portText.setText(String.valueOf(9999));
         portText.setEditable(false);
         leftPane1.add(portText, 1, 1);
 
@@ -97,7 +106,6 @@ public class ServerUI extends Application {
         leftPane2.add(sendMsgArea, 0, 4, 2, 1);
         leftPane2.add(sendButton, 2, 4);
 
-
         //组合
         VBox vBox = new VBox();
         vBox.getChildren().addAll(leftPane1, leftPane2);
@@ -105,19 +113,16 @@ public class ServerUI extends Application {
         hBox.getChildren().addAll(vBox, rightPane);
 
         Scene scene = new Scene(hBox);
-        primaryStage.setTitle("server");
-        primaryStage.setScene(scene);
+        stage.setTitle("server");
+        stage.setScene(scene);
         //关闭UI线程时同时关闭各子线程
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
                 System.exit(0);
             }
         });
-        primaryStage.show();
-
-        //启动server线程
-        new Thread(new Server(ipText, portText, sendMsgArea, sendButton,groupButton,kickOutButton, receivedMsgArea, clients, clientListView,groups,grouperListView,groupers,grouperListView)).start();
+        stage.show();
     }
 
 }

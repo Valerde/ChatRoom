@@ -2,16 +2,13 @@ package ykn.sovava.myclient.scene;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 /**
  * Description:
@@ -28,15 +25,15 @@ public class ChatScene {
     public Button sendButton;
     public Stage stage;
     public GridPane rightPane;
-    ObservableList<String> clients = FXCollections.observableArrayList();
+    public ObservableList<String> clients = FXCollections.observableArrayList();
     public ListView<String> clientListView = new ListView<>(clients);
-    ObservableList<String> group = FXCollections.observableArrayList();
+    public ObservableList<String> group = FXCollections.observableArrayList();
     public ListView<String> groupListView = new ListView<>(group);
-    ObservableList<String> grouper = FXCollections.observableArrayList();
+    public ObservableList<String> grouper = FXCollections.observableArrayList();
     public ListView<String> grouperListView = new ListView<>(grouper);
+
     public ChatScene(Stage stage) {
         this.stage = stage;
-
 
         //右边 Received Message
         rightPane = new GridPane();
@@ -67,19 +64,20 @@ public class ChatScene {
         leftPane2.setPadding(new Insets(11.5, 12.5, 13.5, 14.5));
         leftPane2.setHgap(5.5);
         leftPane2.setVgap(5.5);
+
         friendsButton = new Button("Friends");
-        //friendsButton.setMaxWidth(50);
         leftPane2.add(friendsButton, 0, 1);
-        //leftPane2.add(new Label("Friends:"), 0, 1);
         clientListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         clientListView.setPrefHeight(5);
         clientListView.setMaxWidth(275);
         leftPane2.add(clientListView, 0, 2,2,1);
+
         groupButton = new Button("Groups");
         leftPane2.add(groupButton, 0, 3);
         groupListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         groupListView.setPrefHeight(5);
         groupListView.setMaxWidth(120);
+
         leftPane2.add(groupListView, 0, 4);
         grouperListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         grouperListView.setPrefHeight(5);
@@ -98,12 +96,9 @@ public class ChatScene {
         msgText.setMaxHeight(50);
         msgText.setWrapText(true);
         msgText.setPromptText("和好友愉快的聊天吧");
-
-
         leftPane3.add(msgText, 0, 0,2,1);
         sendButton = new Button("Send");
         leftPane3.add(sendButton, 2, 0);
-
 
         //组合
         VBox vBox = new VBox();

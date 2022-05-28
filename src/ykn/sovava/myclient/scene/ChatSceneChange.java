@@ -16,8 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Description:
- *
+ * Description:控件更改
  * @author: ykn
  * @date: 2022年05月22日 18:01
  **/
@@ -46,9 +45,7 @@ public abstract class ChatSceneChange extends ChatScene {
         //显示朋友列表
         friendsButton.setOnAction(event -> {
             friendsOrGroups = 0;
-
             Platform.runLater(() -> {
-                friendToSend.clear();
                 clientListView.setPrefHeight(100);
                 groupListView.setPrefHeight(5);
                 grouperListView.setPrefHeight(5);
@@ -59,14 +56,12 @@ public abstract class ChatSceneChange extends ChatScene {
         groupButton.setOnAction(event -> {
             friendsOrGroups = 1;
             Platform.runLater(() -> {
-                friendToSend.clear();
                 clientListView.setPrefHeight(5);
                 groupListView.setPrefHeight(100);
                 grouperListView.setPrefHeight(100);
             });
         });
-
-
+        //设置关闭
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
@@ -76,26 +71,33 @@ public abstract class ChatSceneChange extends ChatScene {
         });
     }
 
+    /**
+     * Description: 发送消息的事件监听
+     * @author: ykn
+     * @date: 2022/5/28 16:21
+     * @return: void
+     */
     protected void sendMSG() {
-
+        //选择朋友
         clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+            //清除群组的选择
             groupListView.getSelectionModel().clearSelection();
-//            friendToSend.clear();
+
             if (friendsOrGroups == 0) {
                 friendToSend.clear();
                 friendToSend.addAll(clientListView.getSelectionModel().getSelectedItems());
             }
         });
-
+        //选择群组
         groupListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+            //清除朋友的选择
             clientListView.getSelectionModel().clearSelection();
+
             if (friendsOrGroups == 1) {
                 friendToSend.clear();
                 friendToSend.addAll(groupListView.getSelectionModel().getSelectedItems());
             }
         });
-
-
         //设置发送按钮发送消息
         sendButton.setOnAction(e -> {
             send();
@@ -110,31 +112,42 @@ public abstract class ChatSceneChange extends ChatScene {
 
     }
 
+    /**
+     * Description: 正式发送消息
+     * @author: ykn
+     * @date: 2022/5/28 16:21
+     * @return: void
+     */
     private void send() {
         f = new StringBuilder();
         for (String h : friendToSend) {
             assert false;
             f.append(h).append(",");
         }
-        System.out.println(friendsOrGroups);
-        System.out.println(friendToSend);
+
         f.deleteCharAt(f.length() - 1);
         msg = msgText.getText();
+        //本地显示说话
         if (friendsOrGroups == 0) {
-            receivedMsgArea.appendText("我:" + msg + "\r\n");
+            receivedMsgArea.appendText("我对" + f + ":" + msg + "\r\n");
         } else if (friendsOrGroups == 1) {
-            receivedMsgArea.appendText("我在"+group.get(0) + "中说:" + msg + "\r\n");
+            receivedMsgArea.appendText("我在" + group.get(0) + "中说:" + msg + "\r\n");
         }
-
+        //发送
         if (msg != null && !msg.equals("")) {
             assert false;
             ps.println(Header.UPLOAD_MSG + "|" + f.toString() + "|" + msg);
-//            f = null;
             if (msgText != null) msgText.clear();
-            //ps.flush();
+
         }
     }
-
+    /**
+     * Description: 好友离线
+     * @author: ykn
+     * @date: 2022/5/28 16:30
+     * @param nickName: 离线好友的昵称
+     * @return: void
+     */
     public void updateForDisConnect(String nickName) {
         Platform.runLater(() -> {
             clients.remove(nickName);
