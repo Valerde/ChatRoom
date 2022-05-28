@@ -72,17 +72,17 @@ public class ChatScene {
         leftPane2.add(friendsButton, 0, 1);
         //leftPane2.add(new Label("Friends:"), 0, 1);
         clientListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        clientListView.setMaxHeight(100);
+        clientListView.setPrefHeight(5);
         clientListView.setMaxWidth(275);
         leftPane2.add(clientListView, 0, 2,2,1);
         groupButton = new Button("Groups");
         leftPane2.add(groupButton, 0, 3);
         groupListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        groupListView.setMaxHeight(100);
+        groupListView.setPrefHeight(5);
         groupListView.setMaxWidth(120);
         leftPane2.add(groupListView, 0, 4);
         grouperListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        grouperListView.setMaxHeight(100);
+        grouperListView.setPrefHeight(5);
         grouperListView.setMaxWidth(120);
         leftPane2.add(grouperListView, 1, 4);
 

@@ -1,11 +1,9 @@
 package ykn.sovava.myclient.scene;
 
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 import ykn.sovava.myclient.util.Header;
 import ykn.sovava.myclient.util.msgHandle;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -32,6 +30,7 @@ public class ClientRun extends ChatSceneChange implements Runnable {
                 sendMSG();
 
                 String getMSG = br.readLine();
+                System.out.println(getMSG);
                 mh = new msgHandle(getMSG);
                 msgHandle();
 
@@ -41,6 +40,12 @@ public class ClientRun extends ChatSceneChange implements Runnable {
         }
     }
 
+    /**
+     * Description: 客户端消息处理
+     * @author: ykn
+     * @date: 2022/5/28 10:48
+     * @return: void
+     */
     private void msgHandle() {
         switch (mh.getHeader()) {
             case Header.ISSUED_MSG: {
@@ -63,28 +68,24 @@ public class ClientRun extends ChatSceneChange implements Runnable {
             case Header.YOUR_GROUP: {
                 Platform.runLater(() -> {
                     group.add(mh.getGroupName());
-                    grouper = (ObservableList<String>) mh.getGrouperName();
+                    grouper.addAll(mh.getGrouperName());
                 });
                 break;
             }
             case Header.SOMEONE_LEAVE: {
                 updateForDisConnect(mh.getNickName());
+                break;//傻逼就不写break;
             }
             case Header.LOG_IN_ED: {
                 List<String> fl = mh.getGrouperName();
                 Platform.runLater(() -> {
-                    if (!fl.get(0).equals(""))
-//                        System.out.println("-" +  + "-");
+                    if (fl.get(0).equals("")) return;
                     clients.addAll(fl);
                 });
+                break;
             }
         }
     }
 
-    public void updateForDisConnect(String nickName) {
-        Platform.runLater(() -> {
-            clients.remove(nickName);
-            receivedMsgArea.appendText(nickName + " out of connected.." + "\n");
-        });
-    }
+
 }

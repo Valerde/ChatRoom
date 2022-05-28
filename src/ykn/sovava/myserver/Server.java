@@ -1,12 +1,10 @@
 package ykn.sovava.myserver;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
@@ -24,18 +22,25 @@ public class Server implements Runnable {
     //存放已连接socket地址(IP:Port)，用于clientListView
     ObservableList<String> clients;
     ListView<String> clientListView;
+    ObservableList<String> groups;
+    ListView<String> groupListView;
+    ObservableList<String> groupers;
+    ListView<String> grouperListView;
     TextField ipText;
     TextField portText;
     TextArea sendMsgArea;
     Button sendButton;
     TextArea receivedMsgArea;
+    Button groupButton;
+    Button kickOutButton;
 
     public Server() {
 
     }
 
-    public Server(TextField ipText, TextField portText, TextArea sendMsgArea, Button sendButton,
-                  TextArea receivedMsgArea, ObservableList<String> clients, ListView<String> clientListView) {
+    public Server(TextField ipText, TextField portText, TextArea sendMsgArea, Button sendButton, Button groupButton, Button kickOutButton,
+                  TextArea receivedMsgArea, ObservableList<String> clients, ListView<String> clientListView,
+                  ObservableList<String> groups, ListView<String> groupListView, ObservableList<String> groupers, ListView<String> grouperListView) {
         super();
         this.ipText = ipText;
         this.portText = portText;
@@ -44,6 +49,12 @@ public class Server implements Runnable {
         this.receivedMsgArea = receivedMsgArea;
         this.clients = clients;
         this.clientListView = clientListView;
+        this.groupButton = groupButton;
+        this.kickOutButton = kickOutButton;
+        this.groups = groups;
+        this.groupListView = groupListView;
+        this.groupers = groupers;
+        this.grouperListView = grouperListView;
     }
 
     /**
@@ -67,7 +78,7 @@ public class Server implements Runnable {
             while (true) {
                 socket = server.accept();
                 //一个客户端接入就启动一个handler线程去处理
-                new Thread(new Handler(map, socket, sendMsgArea,  sendButton, receivedMsgArea, clients, clientListView)).start();
+                new Thread(new Handler(map, socket, sendMsgArea, sendButton, groupButton, kickOutButton, receivedMsgArea, clients, clientListView,groups,grouperListView,groupers,grouperListView)).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

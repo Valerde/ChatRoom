@@ -1,13 +1,5 @@
 package ykn.sovava.myserver;
 
-/**
- * @className: ServerUI
- * @description:
- * @author: ykn
- * @date: 2022/5/19
- **/
-
-
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,7 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-
 /**
  * @className: ServerUI
  * @description:
@@ -38,14 +29,15 @@ public class ServerUI extends Application {
     TextField ipText = new TextField();
     TextField portText = new TextField();
     TextArea sendMsgArea = new TextArea();
-    //    TextField statusText = new TextField();
     Button sendButton = new Button(" Send ");
     Button groupButton = new Button(" make ");
+    Button kickOutButton = new Button("kick");
     ObservableList<String> clients = FXCollections.observableArrayList();
-    //    ListView<String> clientListView = new ListView<>(clients);
     public ListView<String> clientListView = new ListView<>(clients);
-    public ListView<String> groupListView = new ListView<>();
-    public ListView<String> grouperListView = new ListView<>();
+    ObservableList<String> groups = FXCollections.observableArrayList();
+    public ListView<String> groupListView = new ListView<>(groups);
+    ObservableList<String> groupers = FXCollections.observableArrayList();
+    public ListView<String> grouperListView = new ListView<>(groupers);
 
     public void start(Stage primaryStage) throws Exception {
 
@@ -86,6 +78,7 @@ public class ServerUI extends Application {
         leftPane2.add(clientListView, 0, 1, 2, 1);
         groupButton = new Button("make");
         leftPane2.add(groupButton, 1, 0);
+        leftPane2.add(kickOutButton,2,0);
         groupListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         groupListView.setMaxHeight(100);
         groupListView.setMaxWidth(120);
@@ -123,9 +116,8 @@ public class ServerUI extends Application {
         });
         primaryStage.show();
 
-//        statusText.setText("0 Connect success.");
         //启动server线程
-        new Thread(new Server(ipText, portText, sendMsgArea, sendButton, receivedMsgArea, clients, clientListView)).start();
+        new Thread(new Server(ipText, portText, sendMsgArea, sendButton,groupButton,kickOutButton, receivedMsgArea, clients, clientListView,groups,grouperListView,groupers,grouperListView)).start();
     }
 
 }
