@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Description: 客户处理
@@ -183,15 +184,15 @@ public class Handler extends ServerUI implements Runnable {
             groups.add(groupName);
             groupers.addAll(grouper);
 
-            groupMap.put(groupName, groupers);
+            groupMap.put(groupName, new ArrayList<>(grouper));
             System.out.println(groupMap);
             StringBuilder f = new StringBuilder();
-            for (String h : groupers) {
+            for (String h : grouper) {
                 assert false;
                 f.append(h).append(",");
             }
             f.deleteCharAt(f.length() - 1);
-            for (String c : groupers) {
+            for (String c : grouper) {
                 map.get(c).ps.println(Header.YOUR_GROUP + "|" + f + "|" + groupName);
             }
             grouper.clear();

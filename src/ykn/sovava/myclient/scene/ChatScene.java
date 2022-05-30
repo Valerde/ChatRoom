@@ -10,7 +10,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,11 +32,11 @@ public class ChatScene {
     public GridPane rightPane;
     public ObservableList<String> clients = FXCollections.observableArrayList();
     public ListView<String> clientListView = new ListView<>(clients);
-    public ObservableList<String> group = FXCollections.observableArrayList();
+    public static ObservableList<String> group = FXCollections.observableArrayList();
     public ListView<String> groupListView = new ListView<>(group);
-    public ObservableList<String> grouper = FXCollections.observableArrayList();
+    public static ObservableList<String> grouper = FXCollections.observableArrayList();
     public ListView<String> grouperListView = new ListView<>(grouper);
-    public Map<String,ObservableList<String>> groupMap = new HashMap<>();
+    public static Map<String, ArrayList<String>> groupMap = new HashMap<>();
 
     public ChatScene(Stage stage) {
         this.stage = stage;

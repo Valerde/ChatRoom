@@ -5,10 +5,11 @@ import javafx.stage.Stage;
 import ykn.sovava.myclient.util.Header;
 import ykn.sovava.myclient.util.msgHandle;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Description:
+ * Description:客户端主线程
  *
  * @author: ykn
  * @date: 2022年05月22日 18:08
@@ -27,10 +28,8 @@ public class ClientRun extends ChatSceneChange implements Runnable {
     public void run() {
         while (true) {
             try {
-//                Platform.runLater(()->{
-                    sendMSG();
-//                });
 
+                sendMSG();
 
                 String getMSG = br.readLine();
                 System.out.println(getMSG);
@@ -45,6 +44,7 @@ public class ClientRun extends ChatSceneChange implements Runnable {
 
     /**
      * Description: 客户端消息处理
+     *
      * @author: ykn
      * @date: 2022/5/28 10:48
      * @return: void
@@ -54,6 +54,8 @@ public class ClientRun extends ChatSceneChange implements Runnable {
             case Header.ISSUED_MSG: {
                 Platform.runLater(() -> {
                     receivedMsgArea.appendText(mh.getNickName() + ":" + mh.getContext() + "\r\n");
+//                    String s = "a\r\nb\r\nc\r\n";
+//                    receivedMsgArea.appendText("test1:"+"\r\n"+"test2"+s);
                 });
                 break;
             }
@@ -70,8 +72,15 @@ public class ClientRun extends ChatSceneChange implements Runnable {
             }
             case Header.YOUR_GROUP: {
                 Platform.runLater(() -> {
+                    grouper.clear();
                     group.add(mh.getGroupName());
+//                    System.out.println("group.add(mh.getGroupName());"+group);
                     grouper.addAll(mh.getGrouperName());
+//                    System.out.println("mh.getGrouperName()"+mh.getGrouperName());
+//                    System.out.println("grouper.addAll(mh.getGrouperName());"+grouper);
+                    ArrayList<String> temp = new ArrayList<>(grouper);
+                    groupMap.put(mh.getGroupName(), temp);
+//                    System.out.println(groupMap);
                 });
                 break;
             }
