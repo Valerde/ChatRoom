@@ -1,9 +1,8 @@
 package ykn.sovava.myserver;
 
 import javafx.application.Platform;
-import javafx.stage.Stage;
+import javafx.scene.input.KeyCode;
 import ykn.sovava.myclient.util.Header;
-//import ykn.sovava.myserver.util.msgHandle;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Description: 客户处理
@@ -28,7 +26,9 @@ public class Handler extends ServerUI implements Runnable {
     public String nickName;
     public msgHandle mh;
     public Map<String, Handler> map;
-
+    public Set<String> friendToSend = new HashSet<>();
+    public int friendsOrGroups = -1;//表示选择,-1表示缺省,0表示friends,1表示groups
+    public StringBuilder f = null;
 
     public Handler(Socket socket, Map<String, Handler> map) {
         super();
@@ -85,7 +85,7 @@ public class Handler extends ServerUI implements Runnable {
                 System.out.println(mh.getContext());
                 receivedMsgArea.appendText(nickName + ":" + mh.getContext() + "\n");
                 List<String> fl = mh.getGrouperName();
-                if (groupMap.get(fl.get(0))!=null ) {
+                if (groupMap.get(fl.get(0)) != null) {
                     for (String s : groupMap.get(fl.get(0))) {
                         if (!s.equals(nickName))
                             map.get(s).ps.println(Header.ISSUED_MSG + "|" + fl.get(0) + "中" + nickName + "|" + mh.getContext());
@@ -131,24 +131,93 @@ public class Handler extends ServerUI implements Runnable {
         });
     }
 
+    String gN;
+
     /**
      * 单发及群发消息
      */
     public void sendMessage() {
-        Set<Handler> handlers = new HashSet<>();
+////        Set<Handler> handlers = new HashSet<>();
+//        clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+//            handlers.clear();
+//            for (String key : clientListView.getSelectionModel().getSelectedItems()) {
+//                handlers.add(map.get(key));
+//            }
+//        });
+//        sendButton.setOnAction(e -> {
+//            for (Handler h : handlers) {
+//                h.ps.println(Header.ISSUED_MSG + "|" + "Server" + "|" + sendMsgArea.getText());
+//                h.ps.flush();
+//            }
+//
+//
+//            sendMsgArea.clear();
+//        });
+
         clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
-            handlers.clear();
-            for (String key : clientListView.getSelectionModel().getSelectedItems()) {
-                handlers.add(map.get(key));
-            }
+            friendsOrGroups = 0;
+            //清除群组的选择
+            Platform.runLater(() -> {
+                groupListView.getSelectionModel().clearSelection();
+
+                if (friendsOrGroups == 0) {
+                    friendToSend.clear();
+                    friendToSend.addAll(clientListView.getSelectionModel().getSelectedItems());
+                    System.out.println(friendsOrGroups + "---" + friendToSend);
+                }
+            });
+
         });
+        //选择群组
+        groupListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+            friendsOrGroups = 1;
+            Platform.runLater(() -> {
+                //清除朋友的选择
+                clientListView.getSelectionModel().clearSelection();
+                groupers.clear();
+                System.out.println("-" + groupListView.getSelectionModel().getSelectedItems().get(0));
+                gN = groupListView.getSelectionModel().getSelectedItems().get(0);
+                groupers.addAll(groupMap.get(gN));
+                System.out.println("选择群组" + groupers);
+                if (friendsOrGroups == 1) {
+                    friendToSend.clear();
+                    friendToSend.addAll(groupListView.getSelectionModel().getSelectedItems());
+                    System.out.println(friendsOrGroups + "---" + friendToSend);
+                }
+            });
+
+        });
+        //设置发送按钮发送消息
         sendButton.setOnAction(e -> {
-            for (Handler h : handlers) {
-                h.ps.println(Header.ISSUED_MSG + "|" + "Server" + "|" + sendMsgArea.getText());
-                h.ps.flush();
-            }
-            sendMsgArea.clear();
+            Platform.runLater(this::send);
         });
+        //设置回车发送消息
+        sendMsgArea.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) { //判断是否按下回车
+                event.consume();
+                Platform.runLater(this::send);
+            }
+        });
+    }
+
+    private void send() {
+        String msg = sendMsgArea.getText();
+        if (friendsOrGroups == 0) {
+            receivedMsgArea.appendText("我对" + f + ":" + msg + "\r\n");
+            for (String s : friendToSend) {
+                map.get(s).ps.println(Header.ISSUED_MSG + "|" + "Server" + "|" + msg);
+            }
+        } else if (friendsOrGroups == 1) {
+            receivedMsgArea.appendText("我在" + gN + "中说:" + msg + "\r\n");
+            ArrayList<String> list = groupMap.get(gN);
+            for (String s : list) {
+                    map.get(s).ps.println(Header.ISSUED_MSG + "|" + "Server" + "|" + msg);
+                }
+        }
+        //发送
+        if (msg != null && !msg.equals("")) {
+            if (sendMsgArea != null) sendMsgArea.clear();
+        }
     }
 
     /**
@@ -175,27 +244,35 @@ public class Handler extends ServerUI implements Runnable {
     public void makeGroup() {
         Set<String> grouper = new HashSet<>();
         clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
-            grouper.clear();
-            grouper.addAll(clientListView.getSelectionModel().getSelectedItems());
+            friendsOrGroups = 0;
+            Platform.runLater(()->{
+                grouper.clear();
+                grouper.addAll(clientListView.getSelectionModel().getSelectedItems());
+            });
+
+
         });
         groupButton.setOnAction(e -> {
+            Platform.runLater(() -> {
+                String groupName = "新建群聊" + Integer.toString((int) (Math.random() * 100));
+                groupers.clear();
+                groups.add(groupName);
+                groupers.addAll(grouper);
 
-            String groupName = "新建群聊" + Integer.toString((int) (Math.random() * 100));
-            groups.add(groupName);
-            groupers.addAll(grouper);
+                groupMap.put(groupName, new ArrayList<>(grouper));
+                System.out.println(groupMap);
+                StringBuilder f = new StringBuilder();
+                for (String h : grouper) {
+                    assert false;
+                    f.append(h).append(",");
+                }
+                f.deleteCharAt(f.length() - 1);
+                for (String c : grouper) {
+                    map.get(c).ps.println(Header.YOUR_GROUP + "|" + f + "|" + groupName);
+                }
+                grouper.clear();
+            });
 
-            groupMap.put(groupName, new ArrayList<>(grouper));
-            System.out.println(groupMap);
-            StringBuilder f = new StringBuilder();
-            for (String h : grouper) {
-                assert false;
-                f.append(h).append(",");
-            }
-            f.deleteCharAt(f.length() - 1);
-            for (String c : grouper) {
-                map.get(c).ps.println(Header.YOUR_GROUP + "|" + f + "|" + groupName);
-            }
-            grouper.clear();
         });
 
     }

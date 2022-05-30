@@ -70,7 +70,7 @@ public abstract class ChatSceneChange extends ChatScene {
             }
         });
     }
-
+    String gN;
     /**
      * Description: 发送消息的事件监听
      *
@@ -100,7 +100,8 @@ public abstract class ChatSceneChange extends ChatScene {
                 clientListView.getSelectionModel().clearSelection();
                 grouper.clear();
 //                System.out.println("-"+groupListView.getSelectionModel().getSelectedItems().get(0));
-                grouper.addAll(groupMap.get(groupListView.getSelectionModel().getSelectedItems().get(0)));
+                 gN= groupListView.getSelectionModel().getSelectedItems().get(0);
+                grouper.addAll(groupMap.get(gN));
 //                System.out.println("选择群组"+grouper);
                 if (friendsOrGroups == 1) {
                     friendToSend.clear();
@@ -144,7 +145,7 @@ public abstract class ChatSceneChange extends ChatScene {
         if (friendsOrGroups == 0) {
             receivedMsgArea.appendText("我对" + f + ":" + msg + "\r\n");
         } else if (friendsOrGroups == 1) {
-            receivedMsgArea.appendText("我在" + group.get(0) + "中说:" + msg + "\r\n");
+            receivedMsgArea.appendText("我在" + gN + "中说:" + msg + "\r\n");
         }
         //发送
         if (msg != null && !msg.equals("")) {

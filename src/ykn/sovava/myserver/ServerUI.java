@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +42,9 @@ public abstract class ServerUI {
     public static ListView<String> groupListView = new ListView<>(groups);
     public static ObservableList<String> groupers = FXCollections.observableArrayList();
     public static ListView<String> grouperListView = new ListView<>(groupers);
-    public static Map<String, List<String>> groupMap = new HashMap<>();
+    //public static Map<String, List<String>> groupMap = new HashMap<>();
     public static Stage stage;
+    public static Map<String, ArrayList<String>> groupMap = new HashMap<>();
 
     public ServerUI() {
     }
