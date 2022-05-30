@@ -27,7 +27,10 @@ public class ClientRun extends ChatSceneChange implements Runnable {
     public void run() {
         while (true) {
             try {
-                sendMSG();
+//                Platform.runLater(()->{
+                    sendMSG();
+//                });
+
 
                 String getMSG = br.readLine();
                 System.out.println(getMSG);

@@ -10,6 +10,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Description:
  *
@@ -31,6 +34,7 @@ public class ChatScene {
     public ListView<String> groupListView = new ListView<>(group);
     public ObservableList<String> grouper = FXCollections.observableArrayList();
     public ListView<String> grouperListView = new ListView<>(grouper);
+    public Map<String,ObservableList<String>> groupMap = new HashMap<>();
 
     public ChatScene(Stage stage) {
         this.stage = stage;

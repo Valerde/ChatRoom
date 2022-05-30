@@ -3,6 +3,8 @@ package ykn.sovava.myserver;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import ykn.sovava.myclient.util.Header;
+//import ykn.sovava.myserver.util.msgHandle;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +15,7 @@ import java.util.*;
 
 /**
  * Description: 客户处理
+ *
  * @author: ykn
  * @date: 2022年05月28日 16:01
  **/
@@ -25,7 +28,8 @@ public class Handler extends ServerUI implements Runnable {
     public msgHandle mh;
     public Map<String, Handler> map;
 
-    public Handler( Socket socket, Map<String, Handler> map) {
+
+    public Handler(Socket socket, Map<String, Handler> map) {
         super();
 
         this.socket = socket;
@@ -80,8 +84,8 @@ public class Handler extends ServerUI implements Runnable {
                 System.out.println(mh.getContext());
                 receivedMsgArea.appendText(nickName + ":" + mh.getContext() + "\n");
                 List<String> fl = mh.getGrouperName();
-                if (fl.get(0).equals(groups.get(0))) {
-                    for (String s : groupers) {
+                if (groupMap.get(fl.get(0))!=null ) {
+                    for (String s : groupMap.get(fl.get(0))) {
                         if (!s.equals(nickName))
                             map.get(s).ps.println(Header.ISSUED_MSG + "|" + fl.get(0) + "中" + nickName + "|" + mh.getContext());
                     }
@@ -139,9 +143,10 @@ public class Handler extends ServerUI implements Runnable {
         });
         sendButton.setOnAction(e -> {
             for (Handler h : handlers) {
-                h.ps.println("Server" + "|" + sendMsgArea.getText() + "| " + "\r\n");
+                h.ps.println(Header.ISSUED_MSG + "|" + "Server" + "|" + sendMsgArea.getText());
                 h.ps.flush();
             }
+            sendMsgArea.clear();
         });
     }
 
@@ -173,10 +178,13 @@ public class Handler extends ServerUI implements Runnable {
             grouper.addAll(clientListView.getSelectionModel().getSelectedItems());
         });
         groupButton.setOnAction(e -> {
+
             String groupName = "新建群聊" + Integer.toString((int) (Math.random() * 100));
             groups.add(groupName);
             groupers.addAll(grouper);
 
+            groupMap.put(groupName, groupers);
+            System.out.println(groupMap);
             StringBuilder f = new StringBuilder();
             for (String h : groupers) {
                 assert false;
@@ -186,6 +194,7 @@ public class Handler extends ServerUI implements Runnable {
             for (String c : groupers) {
                 map.get(c).ps.println(Header.YOUR_GROUP + "|" + f + "|" + groupName);
             }
+            grouper.clear();
         });
 
     }

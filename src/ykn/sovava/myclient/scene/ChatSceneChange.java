@@ -81,33 +81,46 @@ public abstract class ChatSceneChange extends ChatScene {
         //选择朋友
         clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
             //清除群组的选择
-            groupListView.getSelectionModel().clearSelection();
+            Platform.runLater(()->{
+                groupListView.getSelectionModel().clearSelection();
 
-            if (friendsOrGroups == 0) {
-                friendToSend.clear();
-                friendToSend.addAll(clientListView.getSelectionModel().getSelectedItems());
-            }
+                if (friendsOrGroups == 0) {
+                    friendToSend.clear();
+                    friendToSend.addAll(clientListView.getSelectionModel().getSelectedItems());
+                    System.out.println(friendsOrGroups+"---"+friendToSend);
+                }
+            });
+
         });
         //选择群组
         groupListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
-            //清除朋友的选择
-            clientListView.getSelectionModel().clearSelection();
+            Platform.runLater(()->{
+                //清除朋友的选择
+                clientListView.getSelectionModel().clearSelection();
 
-            if (friendsOrGroups == 1) {
-                friendToSend.clear();
-                friendToSend.addAll(groupListView.getSelectionModel().getSelectedItems());
-            }
+                if (friendsOrGroups == 1) {
+                    friendToSend.clear();
+                    friendToSend.addAll(groupListView.getSelectionModel().getSelectedItems());
+                    System.out.println(friendsOrGroups+"---"+friendToSend);
+                }
+            });
+
         });
         //设置发送按钮发送消息
         sendButton.setOnAction(e -> {
-            send();
+            Platform.runLater(()->{
+                send();
+            });
         });
         //设置回车发送消息
         msgText.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) { //判断是否按下回车
-                event.consume();
-                send();
-            }
+            Platform.runLater(()->{
+                if (event.getCode() == KeyCode.ENTER) { //判断是否按下回车
+                    event.consume();
+                    send();
+                }
+            });
+
         });
 
     }
