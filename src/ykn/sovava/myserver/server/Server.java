@@ -1,4 +1,4 @@
-package ykn.sovava.myserver;
+package ykn.sovava.myserver.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,6 +6,11 @@ import java.net.Socket;
 import java.util.*;
 import javafx.stage.Stage;
 
+/**
+ * Description: 服务器主线程
+ * @author: ykn
+ * @date: 2022/5/30 20:52
+ */
 public class Server extends ServerUI implements Runnable {
 
     public Map<String, Handler> map = new HashMap<>();
@@ -30,7 +35,5 @@ public class Server extends ServerUI implements Runnable {
             e.printStackTrace();
         }
     }
-
-
 
 }

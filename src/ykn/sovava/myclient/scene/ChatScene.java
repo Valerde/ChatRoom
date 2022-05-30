@@ -9,15 +9,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Description:
- *
+ * Description:聊天界面初始化
  * @author: ykn
  * @date: 2022年05月22日 17:54
  **/
@@ -74,18 +71,18 @@ public class ChatScene {
         friendsButton = new Button("Friends");
         leftPane2.add(friendsButton, 0, 1);
         clientListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        clientListView.setPrefHeight(5);
+        clientListView.setPrefHeight(100);
         clientListView.setMaxWidth(275);
         leftPane2.add(clientListView, 0, 2,2,1);
 
         groupButton = new Button("Groups");
         leftPane2.add(groupButton, 0, 3);
-        groupListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        groupListView.setPrefHeight(5);
+        groupListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        groupListView.setPrefHeight(100);
         groupListView.setMaxWidth(120);
 
         leftPane2.add(groupListView, 0, 4);
-        grouperListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        grouperListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         grouperListView.setPrefHeight(5);
         grouperListView.setMaxWidth(120);
         leftPane2.add(grouperListView, 1, 4);

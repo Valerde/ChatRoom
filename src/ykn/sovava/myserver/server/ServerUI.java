@@ -1,4 +1,4 @@
-package ykn.sovava.myserver;
+package ykn.sovava.myserver.server;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,12 +19,11 @@ import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
+ * description:服务器UI设计
  * @className: ServerUI
- * @description:
  * @author: ykn
  * @date: 2022/5/19
  **/
@@ -42,7 +41,6 @@ public abstract class ServerUI {
     public static ListView<String> groupListView = new ListView<>(groups);
     public static ObservableList<String> groupers = FXCollections.observableArrayList();
     public static ListView<String> grouperListView = new ListView<>(groupers);
-    //public static Map<String, List<String>> groupMap = new HashMap<>();
     public static Stage stage;
     public static Map<String, ArrayList<String>> groupMap = new HashMap<>();
 
@@ -54,6 +52,12 @@ public abstract class ServerUI {
         initUI();
     }
 
+    /**
+     * Description: 初始化UI
+     * @author: ykn
+     * @date: 2022/5/30 20:56
+     * @return: void
+     */
     public void initUI(){
         //右边 Received Message
         GridPane rightPane = new GridPane();
@@ -69,7 +73,7 @@ public abstract class ServerUI {
 
         //左边 IPAdress+Port
         GridPane leftPane1 = new GridPane();
-        leftPane1.setPadding(new Insets(11.5, 12.5, 13.5, 14.5));
+        leftPane1.setPadding(new Insets(11.5, 12.5, 13.5, 5.5));
         leftPane1.setHgap(5.5);
         leftPane1.setVgap(5.5);
         leftPane1.add(new Label("IPAddress:"), 0, 0);
@@ -83,35 +87,35 @@ public abstract class ServerUI {
 
         //左边 Choose Client
         GridPane leftPane2 = new GridPane();
-        leftPane2.setPadding(new Insets(11.5, 12.5, 13.5, 14.5));
+        leftPane2.setPadding(new Insets(11.5, 5.5, 13.5, 14.5));
         leftPane2.setHgap(5.5);
         leftPane2.setVgap(5.5);
-        leftPane2.add(new Label("Choose Client:"), 0, 0);
+        leftPane2.add(new Label("Choose Client:"), 0, 0,2,1);
 
         clientListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         clientListView.setMaxHeight(100);
-        clientListView.setMaxWidth(275);
-        leftPane2.add(clientListView, 0, 1, 2, 1);
-        groupButton = new Button("make");
-        leftPane2.add(groupButton, 1, 0);
-        leftPane2.add(kickOutButton,2,0);
-        groupListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        clientListView.setMaxWidth(280);
+        leftPane2.add(clientListView, 0, 1, 4, 1);
+        groupButton = new Button("Make");
+        leftPane2.add(groupButton, 2, 0);
+        leftPane2.add(kickOutButton,3,0);
+        groupListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         groupListView.setMaxHeight(100);
-        groupListView.setMaxWidth(120);
-        leftPane2.add(groupListView, 0, 3);
-        grouperListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        groupListView.setMaxWidth(135);
+        leftPane2.add(groupListView, 0, 3,2,1);
+//        grouperListView.getSelectionModel().setSelectionMode(SelectionMode.);
         grouperListView.setMaxHeight(100);
-        grouperListView.setMaxWidth(120);
-        leftPane2.add(grouperListView, 1, 3);
+        grouperListView.setMaxWidth(135);
+        leftPane2.add(grouperListView, 2, 3,2,1);
         //左边 Send Message
 
-        leftPane2.add(new Label("group:"), 0, 2);
+        leftPane2.add(new Label("Choose Group:"), 0, 2);
         sendMsgArea.setMaxHeight(50);
-        sendMsgArea.setMaxWidth(240);
+        sendMsgArea.setMaxWidth(200);
         sendMsgArea.setWrapText(true);
         sendMsgArea.setPromptText("和好友愉快的聊天吧");
-        leftPane2.add(sendMsgArea, 0, 4, 2, 1);
-        leftPane2.add(sendButton, 2, 4);
+        leftPane2.add(sendMsgArea, 0, 4, 3, 1);
+        leftPane2.add(sendButton, 3, 4);
 
         //组合
         VBox vBox = new VBox();

@@ -2,9 +2,11 @@ package ykn.sovava.myserver;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import ykn.sovava.myserver.server.Server;
 
 /**
  * Description: 服务器程序入口
+ *
  * @author: ykn
  * @date: 2022年05月28日 14:45
  **/
@@ -15,7 +17,6 @@ public class ServerMain extends Application {
     }
 
     public static void main(String[] args) {
-
         launch(args);
     }
 }

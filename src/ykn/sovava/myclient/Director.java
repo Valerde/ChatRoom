@@ -4,12 +4,11 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import ykn.sovava.myclient.scene.ChatScene;
 import ykn.sovava.myclient.scene.ClientRun;
 import ykn.sovava.myclient.scene.Login;
 
 /**
- * Description:
+ * Description:客户端导演类
  *
  * @author: ykn
  * @date: 2022年05月22日 18:15
@@ -49,7 +48,6 @@ public class Director {
         stage.setWidth(WIDTH);
         stage.setResizable(false);
         this.stage = stage;
-//        new ChatScene(stage);
         toLogin();
         stage.show();
     }
@@ -66,7 +64,7 @@ public class Director {
     }
 
     /**
-     * Description: 启动游戏界面
+     * Description: 启动聊天界面
      *
      * @author: ykn
      * @date: 2022/5/21 13:58
@@ -78,27 +76,4 @@ public class Director {
         t.start();
     }
 
-    /**
-     * Description: 游戏结束
-     *
-     * @param success: Boolean
-     * @author: ykn
-     * @date: 2022/5/21 13:58
-     * @return: void
-     */
-//    public void gameOver(boolean success) {
-//        client.clear();
-//        GameOver.load(stage, success);
-//    }
-
-    /**
-     * Description: 打开错误记录
-     *
-     * @author: ykn
-     * @date: 2022/5/21 13:59
-     * @return: void
-     */
-//    public void lookWA() {
-//        LookWAScene.load(stage);
-//    }
 }

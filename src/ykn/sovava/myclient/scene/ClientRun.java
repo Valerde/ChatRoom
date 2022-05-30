@@ -28,7 +28,6 @@ public class ClientRun extends ChatSceneChange implements Runnable {
     public void run() {
         while (true) {
             try {
-
                 sendMSG();
 
                 String getMSG = br.readLine();
@@ -38,6 +37,7 @@ public class ClientRun extends ChatSceneChange implements Runnable {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                break;
             }
         }
     }
@@ -54,13 +54,11 @@ public class ClientRun extends ChatSceneChange implements Runnable {
             case Header.ISSUED_MSG: {
                 Platform.runLater(() -> {
                     receivedMsgArea.appendText(mh.getNickName() + ":" + mh.getContext() + "\r\n");
-//                    String s = "a\r\nb\r\nc\r\n";
-//                    receivedMsgArea.appendText("test1:"+"\r\n"+"test2"+s);
                 });
                 break;
             }
             case Header.KICK_OUT: {
-                ps.println(Header.I_LEAVE + "| | ");
+                ps.println(Header.I_LEAVE + "| | \r\n");
                 System.exit(0);
                 break;
             }
@@ -74,19 +72,15 @@ public class ClientRun extends ChatSceneChange implements Runnable {
                 Platform.runLater(() -> {
                     grouper.clear();
                     group.add(mh.getGroupName());
-//                    System.out.println("group.add(mh.getGroupName());"+group);
                     grouper.addAll(mh.getGrouperName());
-//                    System.out.println("mh.getGrouperName()"+mh.getGrouperName());
-//                    System.out.println("grouper.addAll(mh.getGrouperName());"+grouper);
                     ArrayList<String> temp = new ArrayList<>(grouper);
                     groupMap.put(mh.getGroupName(), temp);
-//                    System.out.println(groupMap);
                 });
                 break;
             }
             case Header.SOMEONE_LEAVE: {
                 updateForDisConnect(mh.getNickName());
-                break;//傻逼就不写break;
+                break;
             }
             case Header.LOG_IN_ED: {
                 List<String> fl = mh.getGrouperName();

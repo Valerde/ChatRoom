@@ -30,7 +30,8 @@ public abstract class ChatSceneChange extends ChatScene {
     public String msg;
     public StringBuilder f = null;
     public int friendsOrGroups = -1;//表示选择,-1表示缺省,0表示friends,1表示groups
-    Set<String> friendToSend = new HashSet<>();
+    public Set<String> friendToSend = new HashSet<>();
+    public String gN;
 
     public ChatSceneChange(Stage stage) {
         super(stage);
@@ -46,9 +47,7 @@ public abstract class ChatSceneChange extends ChatScene {
         friendsButton.setOnAction(event -> {
             friendsOrGroups = 0;
             Platform.runLater(() -> {
-                clientListView.setPrefHeight(100);
-                groupListView.setPrefHeight(5);
-                grouperListView.setPrefHeight(5);
+                groupListView.getSelectionModel().clearSelection();
             });
 
         });
@@ -56,9 +55,7 @@ public abstract class ChatSceneChange extends ChatScene {
         groupButton.setOnAction(event -> {
             friendsOrGroups = 1;
             Platform.runLater(() -> {
-                clientListView.setPrefHeight(5);
-                groupListView.setPrefHeight(100);
-                grouperListView.setPrefHeight(100);
+                clientListView.getSelectionModel().clearSelection();
             });
         });
         //设置关闭
@@ -70,10 +67,9 @@ public abstract class ChatSceneChange extends ChatScene {
             }
         });
     }
-    String gN;
+
     /**
      * Description: 发送消息的事件监听
-     *
      * @author: ykn
      * @date: 2022/5/28 16:21
      * @return: void
@@ -81,6 +77,7 @@ public abstract class ChatSceneChange extends ChatScene {
     protected void sendMSG() {
         //选择朋友
         clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+            friendsOrGroups = 0;
             //清除群组的选择
             Platform.runLater(() -> {
                 groupListView.getSelectionModel().clearSelection();
@@ -95,14 +92,15 @@ public abstract class ChatSceneChange extends ChatScene {
         });
         //选择群组
         groupListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
+            friendsOrGroups = 1;
             Platform.runLater(() -> {
                 //清除朋友的选择
                 clientListView.getSelectionModel().clearSelection();
                 grouper.clear();
-//                System.out.println("-"+groupListView.getSelectionModel().getSelectedItems().get(0));
-                 gN= groupListView.getSelectionModel().getSelectedItems().get(0);
+
+                gN = groupListView.getSelectionModel().getSelectedItems().get(0);
                 grouper.addAll(groupMap.get(gN));
-//                System.out.println("选择群组"+grouper);
+
                 if (friendsOrGroups == 1) {
                     friendToSend.clear();
                     friendToSend.addAll(groupListView.getSelectionModel().getSelectedItems());
@@ -158,6 +156,7 @@ public abstract class ChatSceneChange extends ChatScene {
 
     /**
      * Description: 好友离线
+     *
      * @param nickName: 离线好友的昵称
      * @author: ykn
      * @date: 2022/5/28 16:30

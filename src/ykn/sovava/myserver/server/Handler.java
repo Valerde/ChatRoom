@@ -1,14 +1,16 @@
-package ykn.sovava.myserver;
+package ykn.sovava.myserver.server;
 
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import ykn.sovava.myclient.util.Header;
+import ykn.sovava.myserver.util.msgHandle;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -20,15 +22,15 @@ import java.util.*;
  **/
 public class Handler extends ServerUI implements Runnable {
 
-    Socket socket;
-    BufferedReader br;
+    public Socket socket;
+    public BufferedReader br;
     public PrintStream ps;
     public String nickName;
     public msgHandle mh;
     public Map<String, Handler> map;
     public Set<String> friendToSend = new HashSet<>();
     public int friendsOrGroups = -1;//表示选择,-1表示缺省,0表示friends,1表示groups
-    public StringBuilder f = null;
+    public String gN;
 
     public Handler(Socket socket, Map<String, Handler> map) {
         super();
@@ -54,16 +56,22 @@ public class Handler extends ServerUI implements Runnable {
         while (true) {
             try {
                 msg = br.readLine();
-//                    System.out.println(msg);
                 mh = new msgHandle(msg);
                 handlerMSG();
             } catch (IOException e) {
                 e.printStackTrace();
+                return;
             }
 
         }
     }
 
+    /**
+     * Description: 消息处理
+     * @author: ykn
+     * @date: 2022/5/30 20:51
+     * @return: void
+     */
     public void handlerMSG() {
         switch (mh.getHeader()) {
             case Header.MY_LOGIN_NAME: {
@@ -83,7 +91,7 @@ public class Handler extends ServerUI implements Runnable {
             }
             case Header.UPLOAD_MSG: {
                 System.out.println(mh.getContext());
-                receivedMsgArea.appendText(nickName + ":" + mh.getContext() + "\n");
+                receivedMsgArea.appendText(nickName + "对" + mh.getGrouperName() + "说:" + mh.getContext() + "\n");
                 List<String> fl = mh.getGrouperName();
                 if (groupMap.get(fl.get(0)) != null) {
                     for (String s : groupMap.get(fl.get(0))) {
@@ -131,28 +139,10 @@ public class Handler extends ServerUI implements Runnable {
         });
     }
 
-    String gN;
-
     /**
      * 单发及群发消息
      */
     public void sendMessage() {
-////        Set<Handler> handlers = new HashSet<>();
-//        clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
-//            handlers.clear();
-//            for (String key : clientListView.getSelectionModel().getSelectedItems()) {
-//                handlers.add(map.get(key));
-//            }
-//        });
-//        sendButton.setOnAction(e -> {
-//            for (Handler h : handlers) {
-//                h.ps.println(Header.ISSUED_MSG + "|" + "Server" + "|" + sendMsgArea.getText());
-//                h.ps.flush();
-//            }
-//
-//
-//            sendMsgArea.clear();
-//        });
 
         clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
             friendsOrGroups = 0;
@@ -163,7 +153,6 @@ public class Handler extends ServerUI implements Runnable {
                 if (friendsOrGroups == 0) {
                     friendToSend.clear();
                     friendToSend.addAll(clientListView.getSelectionModel().getSelectedItems());
-                    System.out.println(friendsOrGroups + "---" + friendToSend);
                 }
             });
 
@@ -175,14 +164,13 @@ public class Handler extends ServerUI implements Runnable {
                 //清除朋友的选择
                 clientListView.getSelectionModel().clearSelection();
                 groupers.clear();
-                System.out.println("-" + groupListView.getSelectionModel().getSelectedItems().get(0));
+
                 gN = groupListView.getSelectionModel().getSelectedItems().get(0);
                 groupers.addAll(groupMap.get(gN));
-                System.out.println("选择群组" + groupers);
+
                 if (friendsOrGroups == 1) {
                     friendToSend.clear();
                     friendToSend.addAll(groupListView.getSelectionModel().getSelectedItems());
-                    System.out.println(friendsOrGroups + "---" + friendToSend);
                 }
             });
 
@@ -200,19 +188,25 @@ public class Handler extends ServerUI implements Runnable {
         });
     }
 
+    /**
+     * Description: 正式发送消息
+     * @author: ykn
+     * @date: 2022/5/30 20:46
+     * @return: void
+     */
     private void send() {
         String msg = sendMsgArea.getText();
         if (friendsOrGroups == 0) {
-            receivedMsgArea.appendText("我对" + f + ":" + msg + "\r\n");
             for (String s : friendToSend) {
+                receivedMsgArea.appendText("我对" + s + "说:" + msg + "\r\n");
                 map.get(s).ps.println(Header.ISSUED_MSG + "|" + "Server" + "|" + msg);
             }
         } else if (friendsOrGroups == 1) {
             receivedMsgArea.appendText("我在" + gN + "中说:" + msg + "\r\n");
             ArrayList<String> list = groupMap.get(gN);
             for (String s : list) {
-                    map.get(s).ps.println(Header.ISSUED_MSG + "|" + "Server" + "|" + msg);
-                }
+                map.get(s).ps.println(Header.ISSUED_MSG + "|" + "Server" + "|" + msg);
+            }
         }
         //发送
         if (msg != null && !msg.equals("")) {
@@ -245,13 +239,13 @@ public class Handler extends ServerUI implements Runnable {
         Set<String> grouper = new HashSet<>();
         clientListView.getSelectionModel().selectedItemProperty().addListener(ov -> {
             friendsOrGroups = 0;
-            Platform.runLater(()->{
+            Platform.runLater(() -> {
                 grouper.clear();
                 grouper.addAll(clientListView.getSelectionModel().getSelectedItems());
             });
 
-
         });
+
         groupButton.setOnAction(e -> {
             Platform.runLater(() -> {
                 String groupName = "新建群聊" + Integer.toString((int) (Math.random() * 100));
@@ -277,4 +271,4 @@ public class Handler extends ServerUI implements Runnable {
 
     }
 
-}//内部类完
+}
